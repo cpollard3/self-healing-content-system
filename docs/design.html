@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fidelis — design</title>
+<style>
+:root{--bg:#fafaf9;--fg:#1c1917;--muted:#57534e;--line:#e7e5e4;--card:#fff;--accent:#4f46e5;--code:#f5f5f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1917;--fg:#f5f5f4;--muted:#a8a29e;--line:#44403c;--card:#292524;--accent:#a5b4fc;--code:#292524;color-scheme:dark}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{border-bottom:1px solid var(--line);background:var(--card)}
+.bar{max-width:860px;margin:0 auto;padding:14px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
+.brand{font-weight:700;color:var(--fg);text-decoration:none;margin-right:auto}
+.brand span{color:var(--muted);font-weight:400}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;padding:4px 0;border-bottom:2px solid transparent}
+nav{display:flex;gap:18px;flex-wrap:wrap}
+nav a.on{color:var(--fg);border-bottom-color:var(--accent)}
+main{max-width:860px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:2rem;line-height:1.2;margin:0 0 24px}
+h2{font-size:1.35rem;margin:44px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
+h3{font-size:1.1rem;margin:28px 0 8px}
+p,li{max-width:72ch}
+a{color:var(--accent)}
+code{font:0.88em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:1px 5px;border-radius:5px}
+pre{background:var(--code);padding:14px 16px;border-radius:10px;overflow-x:auto;border:1px solid var(--line)}
+pre code{background:none;padding:0}
+.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-weight:600;background:var(--code)}
+tr:last-child td{border-bottom:0}
+.diagram{margin:20px 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--card);overflow-x:auto;text-align:center}
+.diagram svg{max-width:100%;height:auto}
+@media (prefers-color-scheme:dark){.diagram{background:#fafaf9;border-color:#57534e}}
+footer{max-width:860px;margin:0 auto;padding:0 20px 40px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="bar"><a class="brand" href="design.html">Fidelis <span>· self-healing exam content</span></a><nav><a href="design.html" class="on" aria-current="page">Design</a><a href="codebase.html">Codebase</a><a href="ai-collaboration.html">How it was built</a></nav></div></header>
+<main>
+<h1>Fidelis — design</h1>
+<h2>The idea</h2>
+<p>Three layers. Change is detected once, in the middle layer, and everything built on it follows.</p>
+<figure class="diagram"><svg aria-roledescription="flowchart-v2" role="graphics-document document" viewBox="0 0 489.375 616" style="max-width: 489.375px;" class="flowchart" xmlns="http://www.w3.org/2000/svg" width="100%" id="diagram-1"><style>#diagram-1{font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;fill:#000000;}#diagram-1 .error-icon{fill:#552222;}#diagram-1 .error-text{fill:#552222;stroke:#552222;}#diagram-1 .edge-thickness-normal{stroke-width:1px;}#diagram-1 .edge-thickness-thick{stroke-width:3.5px;}#diagram-1 .edge-pattern-solid{stroke-dasharray:0;}#diagram-1 .edge-thickness-invisible{stroke-width:0;fill:none;}#diagram-1 .edge-pattern-dashed{stroke-dasharray:3;}#diagram-1 .edge-pattern-dotted{stroke-dasharray:2;}#diagram-1 .marker{fill:#666;stroke:#666;}#diagram-1 .marker.cross{stroke:#666;}#diagram-1 svg{font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;}#diagram-1 p{margin:0;}#diagram-1 .label{font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;color:#000000;}#diagram-1 .cluster-label text{fill:#333;}#diagram-1 .cluster-label span{color:#333;}#diagram-1 .cluster-label span p{background-color:transparent;}#diagram-1 .label text,#diagram-1 span{fill:#000000;color:#000000;}#diagram-1 .node rect,#diagram-1 .node circle,#diagram-1 .node ellipse,#diagram-1 .node polygon,#diagram-1 .node path{fill:#eee;stroke:#999;stroke-width:1px;}#diagram-1 .rough-node .label text,#diagram-1 .node .label text,#diagram-1 .image-shape .label,#diagram-1 .icon-shape .label{text-anchor:middle;}#diagram-1 .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#diagram-1 .rough-node .label,#diagram-1 .node .label,#diagram-1 .image-shape .label,#diagram-1 .icon-shape .label{text-align:center;}#diagram-1 .node.clickable{cursor:pointer;}#diagram-1 .root .anchor path{fill:#666!important;stroke-width:0;stroke:#666;}#diagram-1 .arrowheadPath{fill:#333333;}#diagram-1 .edgePath .path{stroke:#666;stroke-width:2.0px;}#diagram-1 .flowchart-link{stroke:#666;fill:none;}#diagram-1 .edgeLabel{background-color:white;text-align:center;}#diagram-1 .edgeLabel p{background-color:white;}#diagram-1 .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#diagram-1 .labelBkg{background-color:rgba(255, 255, 255, 0.5);}#diagram-1 .cluster rect{fill:hsl(0, 0%, 98.9215686275%);stroke:#707070;stroke-width:1px;}#diagram-1 .cluster text{fill:#333;}#diagram-1 .cluster span{color:#333;}#diagram-1 div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;font-size:12px;background:hsl(-160, 0%, 93.3333333333%);border:1px solid #707070;border-radius:2px;pointer-events:none;z-index:100;}#diagram-1 .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#000000;}#diagram-1 rect.text{fill:none;stroke-width:0;}#diagram-1 .icon-shape,#diagram-1 .image-shape{background-color:white;text-align:center;}#diagram-1 .icon-shape p,#diagram-1 .image-shape p{background-color:white;padding:2px;}#diagram-1 .icon-shape rect,#diagram-1 .image-shape rect{opacity:0.5;background-color:white;fill:white;}#diagram-1 :root{--mermaid-font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;}</style><g><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="5" viewBox="0 0 10 10" class="marker flowchart-v2" id="diagram-1_flowchart-v2-pointEnd"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 0 L 10 5 L 0 10 z"></path></marker><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="4.5" viewBox="0 0 10 10" class="marker flowchart-v2" id="diagram-1_flowchart-v2-pointStart"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 5 L 10 10 L 10 0 z"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="11" viewBox="0 0 10 10" class="marker flowchart-v2" id="diagram-1_flowchart-v2-circleEnd"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="-1" viewBox="0 0 10 10" class="marker flowchart-v2" id="diagram-1_flowchart-v2-circleStart"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="12" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="diagram-1_flowchart-v2-crossEnd"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="-1" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="diagram-1_flowchart-v2-crossStart"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path marker-end="url(#diagram-1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_D_G_0" d="M138,105.5L138,112.875C138,120.25,138,135,147.833,149.364C157.665,163.728,177.331,177.705,187.163,184.694L196.996,191.683"></path><path marker-end="url(#diagram-1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_G_C_1" d="M231.257,291.5L226.631,297.5C222.004,303.5,212.752,315.5,213.017,327.002C213.282,338.504,223.065,349.507,227.956,355.009L232.847,360.511"></path><path marker-end="url(#diagram-1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_D2_G_2" d="M399.688,83L399.688,94.125C399.688,105.25,399.688,127.5,389.855,145.614C380.022,163.728,360.357,177.705,350.524,184.694L340.692,191.683"></path><path marker-end="url(#diagram-1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_G_C_3" d="M306.431,291.5L311.057,297.5C315.683,303.5,324.935,315.5,324.67,327.002C324.405,338.504,314.623,349.507,309.731,355.009L304.84,360.511"></path><path marker-end="url(#diagram-1_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_C_H_4" d="M268.844,438.5L268.844,444.5C268.844,450.5,268.844,462.5,268.844,473.833C268.844,485.167,268.844,495.833,268.844,501.167L268.844,506.5"></path></g><g class="edgeLabels"><g transform="translate(138, 149.75)" class="edgeLabel"><g transform="translate(-48.407958984375, -11)" class="label"><g><rect height="22" width="96.81591796875" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">LLM:</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> extract</tspan></tspan></text></g></g></g><g transform="translate(203.5, 327.5)" class="edgeLabel"><g transform="translate(-55.7265625, -11)" class="label"><g><rect height="22" width="111.453125" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">LLM:</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> generate</tspan></tspan></text></g></g></g><g transform="translate(399.6875, 149.75)" class="edgeLabel"><g transform="translate(-80.390625, -19.25)" class="label"><g><rect height="38.5" width="160.78125" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">LLM:</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> is</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> each</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> fact</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> still</tspan></tspan><tspan dy="1.1em" y="1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">true?</tspan></tspan></text></g></g></g><g transform="translate(334.1875, 327.5)" class="edgeLabel"><g transform="translate(-54.9609375, -11)" class="label"><g><rect height="22" width="109.921875" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">facts</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> changed</tspan></tspan></text></g></g></g><g transform="translate(268.84375, 474.5)" class="edgeLabel"><g transform="translate(-32.3984375, -11)" class="label"><g><rect height="22" width="64.796875" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">optional</tspan></tspan></text></g></g></g></g><g class="nodes"><g transform="translate(138, 56.75)" id="flowchart-D-0" class="node default"><rect height="97.5" width="260" y="-48.75" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -33.75)" style="" class="label"><rect></rect><foreignObject height="67.5" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Docs<br>exam guide + product pages</p></span></div></foreignObject></g></g><g transform="translate(268.84375, 242.75)" id="flowchart-G-1" class="node default"><rect height="97.5" width="260" y="-48.75" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -33.75)" style="" class="label"><rect></rect><foreignObject height="67.5" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Knowledge graph<br>concepts · facts with quotes</p></span></div></foreignObject></g></g><g transform="translate(268.84375, 401)" id="flowchart-C-3" class="node default"><rect height="75" width="243.15625" y="-37.5" x="-121.578125" style="" class="basic label-container"></rect><g transform="translate(-91.578125, -22.5)" style="" class="label"><rect></rect><foreignObject height="45" width="183.15625"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Content<br>questions linked to facts</p></span></div></foreignObject></g></g><g transform="translate(399.6875, 56.75)" id="flowchart-D2-4" class="node default"><rect height="52.5" width="163.375" y="-26.25" x="-81.6875" style="" class="basic label-container"></rect><g transform="translate(-51.6875, -11.25)" style="" class="label"><rect></rect><foreignObject height="22.5" width="103.375"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Updated docs</p></span></div></foreignObject></g></g><g transform="translate(268.84375, 559.25)" id="flowchart-H-9" class="node default"><rect height="97.5" width="260" y="-48.75" x="-130" style="" class="basic label-container"></rect><g transform="translate(-100, -33.75)" style="" class="label"><rect></rect><foreignObject height="67.5" width="200"><div style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>Human review<br>old vs new fact, quote, question</p></span></div></foreignObject></g></g></g></g></g></svg></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Holds</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Docs</td>
+<td>Pages split into sections</td>
+<td>Container Registry · Overview</td>
+</tr>
+<tr>
+<td>Graph</td>
+<td>Concepts (name, exam section) and facts (statement + verbatim quote + page + status)</td>
+<td>&quot;GKE clusters can pull images directly from Container Registry&quot;</td>
+</tr>
+<tr>
+<td>Content</td>
+<td>Questions, each listing the fact ids it was built from</td>
+<td>q1 → f3, f4</td>
+</tr>
+</tbody></table></div>
+<h2>Pipeline</h2>
+<ol>
+<li><strong>Choose the source of truth</strong> (code): the docs pages everything is built from. The demo starts with Cloud Storage only.</li>
+<li><strong>Build graph</strong> (LLM, one call per page): concepts mapped to exam sections, and 2–5 facts per page, each with a quote copied from the page. Code verifies every quote really appears in the page.</li>
+<li><strong>Generate questions</strong> (LLM, one call): the most important questions from the graph. Each records its fact ids.</li>
+<li><strong>Docs updated</strong> (code): the new versions arrive; the UI shows a word diff per page.</li>
+<li><strong>Update graph</strong> (LLM, one call per page). For every fact: <em>given the updated docs, is this still true?</em> → <code>still_true</code>, <code>changed</code> (with a corrected fact and new quote) or <code>removed</code>. The same call returns facts the update added: things the new version states and the old version did not. It gets both versions of the page, and code drops any &quot;new&quot; fact whose quote was already in the old version. All updated docs are included as context, because a deprecation is often announced on another page.</li>
+<li><strong>Update content and review</strong> (LLM). Only questions built on a changed or removed fact go back, with the old and new facts and quotes and the updated docs. The LLM judges the <strong>whole</strong> question and returns <code>keep</code> or <code>rewrite</code>; if what it tests no longer exists, the rewrite tests its replacement. New or corrected facts that no question covers go to one more call that proposes new questions, given the existing ones so it does not duplicate them. A person can then approve, reject or undo each change.</li>
+</ol>
+<h2>One question, start to finish</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Build graph</td>
+<td>From the Container Registry page: &quot;GKE clusters can pull images directly from Container Registry&quot;, with its quote</td>
+</tr>
+<tr>
+<td>Generate</td>
+<td>q1: deploy a Cloud Build image to GKE with the fewest steps. Answer: push to Container Registry, GKE pulls it</td>
+</tr>
+<tr>
+<td>Update graph</td>
+<td>That fact → <strong>changed</strong>; corrected fact &quot;…from Artifact Registry&quot; with the new quote; new fact &quot;Container Registry is deprecated&quot;</td>
+</tr>
+<tr>
+<td>Update content</td>
+<td>q1 cites a changed fact → <strong>rewrite</strong>: Artifact Registry in the answer and explanation, citing the corrected facts; wrong options unchanged</td>
+</tr>
+<tr>
+<td>Review</td>
+<td>q1 hidden until approved; the reviewer sees old and new facts, quotes and question side by side</td>
+</tr>
+</tbody></table></div>
+<h2>Where people come in</h2>
+<ul>
+<li><strong>Review switch</strong> (on by default). On: every change waits for a person, and questions built on a changed fact are hidden from learners meanwhile; rejecting shows them again. Off: changes that pass the code checks apply automatically.</li>
+<li><strong>Code checks run either way</strong>: a stem and an explanation, exactly 4 distinct options, an answer index that points at one, at least one linked fact, and every linked fact current with its quote found in the updated docs. A change that fails a check always waits for a person.</li>
+<li><strong>Evidence, not just output.</strong> The reviewer sees the old fact and quote beside the new ones, and the old question beside the new one with word-level highlights.</li>
+<li><strong>Undo.</strong> Every applied change keeps the previous version and can be reverted.</li>
+</ul>
+<h2>Decisions</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Chosen</th>
+<th>Instead of</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Core check</td>
+<td>One question per fact: still true?</td>
+<td>Categories of change (rename, deprecation, restructure…) with rules for each</td>
+<td>One check covers every kind of change</td>
+</tr>
+<tr>
+<td>Graph</td>
+<td>Concepts + facts with verbatim quotes</td>
+<td>Graph database; concept lifecycle (deprecated, successor, exam status)</td>
+<td>Every claim traces to a sentence; changed facts already say what a status would</td>
+</tr>
+<tr>
+<td>Content from the graph</td>
+<td>Questions link to fact ids</td>
+<td>Questions generated straight from docs</td>
+<td>The link is what makes healing targeted</td>
+</tr>
+<tr>
+<td>Context for checks</td>
+<td>Each page&#39;s facts checked against all updated pages</td>
+<td>Only the same page</td>
+<td>A deprecation is often announced on another page</td>
+</tr>
+<tr>
+<td>Re-check scope</td>
+<td>Only questions on changed facts</td>
+<td>Every question</td>
+<td>Unaffected content costs nothing</td>
+</tr>
+<tr>
+<td>Content changes</td>
+<td>Rewrite or new</td>
+<td>Also retire</td>
+<td>A question on something that no longer exists is rewritten to test its replacement</td>
+</tr>
+<tr>
+<td>Approval</td>
+<td>Code checks + optional human</td>
+<td>LLM approving its own output</td>
+<td>A model grading itself is not a safeguard</td>
+</tr>
+<tr>
+<td>LLM access</td>
+<td>One <code>callLlm(prompt, zod schema)</code> over any OpenAI-compatible API (Vercel AI SDK; Gemini free tier by default)</td>
+<td>Several modes (replay, CLI)</td>
+<td>One path to understand and test; malformed output fails visibly</td>
+</tr>
+<tr>
+<td>Tests</td>
+<td>A scripted mock model</td>
+<td>Recorded responses</td>
+<td>No key, no recording that breaks when a prompt changes</td>
+</tr>
+<tr>
+<td>Orchestration</td>
+<td>Plain async functions, one per step</td>
+<td>Mastra / LangGraph</td>
+<td>A fixed sequence of steps needs no agent framework</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>One JSON file</td>
+<td>Supabase</td>
+<td>Zero setup for reviewers; one module to swap</td>
+</tr>
+</tbody></table></div>
+<h2>Limits and next steps</h2>
+<ul>
+<li>Only extracted facts are checked. The new-question step reads new docs directly, which partly covers what extraction missed.</li>
+<li>Each check sends all updated docs, which only works because they are short. At scale: retrieve relevant pages first, and only re-check facts from pages whose text changed.</li>
+<li>Exam-guide changes (topics added or dropped) are not tracked; the guide is used only to map concepts to sections.</li>
+<li>LLM judgments are shown, not measured. Next: a labelled set of fact changes with expected verdicts, scored on every prompt change.</li>
+<li>Steps run inside one web request; production would use a job queue with retries, and Postgres for state.</li>
+<li>Lessons or study guides would hang off the same facts and update the same way.</li>
+</ul>
+
+</main>
+<footer>Fidelis · Memorang Exercise B · <a href="../README.md">README</a></footer>
+</body>
+</html>

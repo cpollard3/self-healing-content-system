@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fidelis — codebase guide</title>
+<style>
+:root{--bg:#fafaf9;--fg:#1c1917;--muted:#57534e;--line:#e7e5e4;--card:#fff;--accent:#4f46e5;--code:#f5f5f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1917;--fg:#f5f5f4;--muted:#a8a29e;--line:#44403c;--card:#292524;--accent:#a5b4fc;--code:#292524;color-scheme:dark}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{border-bottom:1px solid var(--line);background:var(--card)}
+.bar{max-width:860px;margin:0 auto;padding:14px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
+.brand{font-weight:700;color:var(--fg);text-decoration:none;margin-right:auto}
+.brand span{color:var(--muted);font-weight:400}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;padding:4px 0;border-bottom:2px solid transparent}
+nav{display:flex;gap:18px;flex-wrap:wrap}
+nav a.on{color:var(--fg);border-bottom-color:var(--accent)}
+main{max-width:860px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:2rem;line-height:1.2;margin:0 0 24px}
+h2{font-size:1.35rem;margin:44px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
+h3{font-size:1.1rem;margin:28px 0 8px}
+p,li{max-width:72ch}
+a{color:var(--accent)}
+code{font:0.88em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:1px 5px;border-radius:5px}
+pre{background:var(--code);padding:14px 16px;border-radius:10px;overflow-x:auto;border:1px solid var(--line)}
+pre code{background:none;padding:0}
+.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-weight:600;background:var(--code)}
+tr:last-child td{border-bottom:0}
+.diagram{margin:20px 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--card);overflow-x:auto;text-align:center}
+.diagram svg{max-width:100%;height:auto}
+@media (prefers-color-scheme:dark){.diagram{background:#fafaf9;border-color:#57534e}}
+footer{max-width:860px;margin:0 auto;padding:0 20px 40px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="bar"><a class="brand" href="design.html">Fidelis <span>· self-healing exam content</span></a><nav><a href="design.html">Design</a><a href="codebase.html" class="on" aria-current="page">Codebase</a><a href="ai-collaboration.html">How it was built</a></nav></div></header>
+<main>
+<h1>Fidelis — codebase guide</h1>
+<p>One Next.js 16 app (about 3,000 lines of TypeScript). The UI and the pipeline live in the same app; there is no separate backend. Start with <code>src/lib/steps.ts</code>.</p>
+<h2>Map</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Path</th>
+<th>What it holds</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>src/lib/steps.ts</code></td>
+<td>The 6 steps: prompts, zod schemas, applying LLM answers to the graph and questions, proposal checks, approve / reject / undo</td>
+</tr>
+<tr>
+<td><code>src/lib/llm.ts</code></td>
+<td><code>callLlm()</code>, the only code that talks to a model (OpenAI-compatible API via the Vercel AI SDK); <code>pMap</code></td>
+</tr>
+<tr>
+<td><code>src/lib/library.ts</code></td>
+<td>The documentation: original and updated text of each page; <code>DEFAULT_SELECTION</code> (Cloud Storage) and <code>ALL_ORIGINAL</code></td>
+</tr>
+<tr>
+<td><code>src/lib/types.ts</code></td>
+<td>Every data type, including the <code>DB</code> object</td>
+</tr>
+<tr>
+<td><code>src/lib/text.ts</code></td>
+<td>Section parsing, page diff, quote verification (exact, or elided with &quot;[...]&quot; with every piece in order)</td>
+</tr>
+<tr>
+<td><code>src/lib/store.ts</code></td>
+<td>JSON-file store (<code>.data/db.json</code>) with a write lock (<code>mutate</code>)</td>
+</tr>
+<tr>
+<td><code>src/lib/stepMeta.ts</code></td>
+<td>Step titles and &quot;what to notice&quot; text, shared by server and UI</td>
+</tr>
+<tr>
+<td><code>src/app/api/*/route.ts</code></td>
+<td>Thin routes: <code>state</code>, <code>step</code>, <code>select</code>, <code>settings</code>, <code>reset</code>, <code>proposals/[id]</code></td>
+</tr>
+<tr>
+<td><code>src/components/</code></td>
+<td>The demo UI: <code>App.tsx</code> shell, <code>StepViews.tsx</code> panels, <code>GraphView.tsx</code>, <code>Diff.tsx</code>, <code>QuestionView.tsx</code>, <code>LlmCalls.tsx</code>, <code>ui.tsx</code></td>
+</tr>
+<tr>
+<td><code>scripts/run-all.ts</code></td>
+<td>Headless steps 1–6 against the real LLM, with a printed summary</td>
+</tr>
+<tr>
+<td><code>tests/</code></td>
+<td>Vitest: text helpers, <code>callLlm</code> with a mock model, the full pipeline with a scripted mock model</td>
+</tr>
+</tbody></table></div>
+<h2>How one step runs</h2>
+<figure class="diagram"><svg aria-roledescription="flowchart-v2" role="graphics-document document" viewBox="0 0 495.1796875 628.5" style="max-width: 495.1796875px;" class="flowchart" xmlns="http://www.w3.org/2000/svg" width="100%" id="diagram-2"><style>#diagram-2{font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;fill:#000000;}#diagram-2 .error-icon{fill:#552222;}#diagram-2 .error-text{fill:#552222;stroke:#552222;}#diagram-2 .edge-thickness-normal{stroke-width:1px;}#diagram-2 .edge-thickness-thick{stroke-width:3.5px;}#diagram-2 .edge-pattern-solid{stroke-dasharray:0;}#diagram-2 .edge-thickness-invisible{stroke-width:0;fill:none;}#diagram-2 .edge-pattern-dashed{stroke-dasharray:3;}#diagram-2 .edge-pattern-dotted{stroke-dasharray:2;}#diagram-2 .marker{fill:#666;stroke:#666;}#diagram-2 .marker.cross{stroke:#666;}#diagram-2 svg{font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;}#diagram-2 p{margin:0;}#diagram-2 .label{font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;color:#000000;}#diagram-2 .cluster-label text{fill:#333;}#diagram-2 .cluster-label span{color:#333;}#diagram-2 .cluster-label span p{background-color:transparent;}#diagram-2 .label text,#diagram-2 span{fill:#000000;color:#000000;}#diagram-2 .node rect,#diagram-2 .node circle,#diagram-2 .node ellipse,#diagram-2 .node polygon,#diagram-2 .node path{fill:#eee;stroke:#999;stroke-width:1px;}#diagram-2 .rough-node .label text,#diagram-2 .node .label text,#diagram-2 .image-shape .label,#diagram-2 .icon-shape .label{text-anchor:middle;}#diagram-2 .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#diagram-2 .rough-node .label,#diagram-2 .node .label,#diagram-2 .image-shape .label,#diagram-2 .icon-shape .label{text-align:center;}#diagram-2 .node.clickable{cursor:pointer;}#diagram-2 .root .anchor path{fill:#666!important;stroke-width:0;stroke:#666;}#diagram-2 .arrowheadPath{fill:#333333;}#diagram-2 .edgePath .path{stroke:#666;stroke-width:2.0px;}#diagram-2 .flowchart-link{stroke:#666;fill:none;}#diagram-2 .edgeLabel{background-color:white;text-align:center;}#diagram-2 .edgeLabel p{background-color:white;}#diagram-2 .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#diagram-2 .labelBkg{background-color:rgba(255, 255, 255, 0.5);}#diagram-2 .cluster rect{fill:hsl(0, 0%, 98.9215686275%);stroke:#707070;stroke-width:1px;}#diagram-2 .cluster text{fill:#333;}#diagram-2 .cluster span{color:#333;}#diagram-2 div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;font-size:12px;background:hsl(-160, 0%, 93.3333333333%);border:1px solid #707070;border-radius:2px;pointer-events:none;z-index:100;}#diagram-2 .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#000000;}#diagram-2 rect.text{fill:none;stroke-width:0;}#diagram-2 .icon-shape,#diagram-2 .image-shape{background-color:white;text-align:center;}#diagram-2 .icon-shape p,#diagram-2 .image-shape p{background-color:white;padding:2px;}#diagram-2 .icon-shape rect,#diagram-2 .image-shape rect{opacity:0.5;background-color:white;fill:white;}#diagram-2 :root{--mermaid-font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;}</style><g><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="5" viewBox="0 0 10 10" class="marker flowchart-v2" id="diagram-2_flowchart-v2-pointEnd"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 0 L 10 5 L 0 10 z"></path></marker><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="4.5" viewBox="0 0 10 10" class="marker flowchart-v2" id="diagram-2_flowchart-v2-pointStart"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 5 L 10 10 L 10 0 z"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="11" viewBox="0 0 10 10" class="marker flowchart-v2" id="diagram-2_flowchart-v2-circleEnd"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="-1" viewBox="0 0 10 10" class="marker flowchart-v2" id="diagram-2_flowchart-v2-circleStart"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="12" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="diagram-2_flowchart-v2-crossEnd"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="-1" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="diagram-2_flowchart-v2-crossStart"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path marker-end="url(#diagram-2_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_A_R_0" d="M210.992,83L204.913,89C198.835,95,186.677,107,180.598,118.333C174.52,129.667,174.52,140.333,174.52,145.667L174.52,151"></path><path marker-end="url(#diagram-2_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_R_S_1" d="M174.52,207.5L174.52,214.875C174.52,222.25,174.52,237,174.52,251.083C174.52,265.167,174.52,278.583,174.52,285.292L174.52,292"></path><path marker-end="url(#diagram-2_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_S_L_2" d="M148.844,371L144.736,377C140.628,383,132.412,395,128.303,406.333C124.195,417.667,124.195,428.333,124.195,433.667L124.195,439"></path><path marker-end="url(#diagram-2_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_L_P_3" d="M124.195,518L124.195,522.167C124.195,526.333,124.195,534.667,124.195,542.333C124.195,550,124.195,557,124.195,560.5L124.195,564"></path><path marker-end="url(#diagram-2_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_S_D_4" d="M222.772,371L230.492,377C238.212,383,253.653,395,267.154,407.154C280.655,419.308,292.216,431.617,297.997,437.771L303.778,443.925"></path><path marker-end="url(#diagram-2_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_D_A_5" d="M368.592,445.165L372.807,438.804C377.022,432.443,385.453,419.722,389.668,401.111C393.883,382.5,393.883,358,393.883,332.125C393.883,306.25,393.883,279,393.883,253.625C393.883,228.25,393.883,204.75,393.883,182.625C393.883,160.5,393.883,139.75,380.891,122.785C367.9,105.82,341.917,92.64,328.926,86.05L315.934,79.461"></path></g><g class="edgeLabels"><g><rect style="stroke: none" class="background"></rect></g><g><rect style="stroke: none" class="background"></rect></g><g><rect style="stroke: none" class="background"></rect></g><g transform="translate(174.51953125, 119)" class="edgeLabel"><g transform="translate(-56.875, -11)" class="label"><g><rect height="22" width="113.75" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">POST</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> /api/step</tspan></tspan></text></g></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><text y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"></tspan></text></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><text y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"></tspan></text></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><text y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"></tspan></text></g></g><g transform="translate(269.09375, 407)" class="edgeLabel"><g transform="translate(-80.6484375, -11)" class="label"><g><rect height="22" width="161.296875" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">writes</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> after</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> each</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> call</tspan></tspan></text></g></g></g><g transform="translate(393.8828125, 251.75)" class="edgeLabel"><g transform="translate(-95.296875, -19.25)" class="label"><g><rect height="38.5" width="190.59375" y="-1" x="-2" style="" class="background"></rect><text style="" y="-10.1"><tspan dy="1.1em" y="-0.1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">GET</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> /api/state</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> every</tspan><tspan font-weight="normal" class="text-inner-tspan" font-style="normal"> 900</tspan></tspan><tspan dy="1.1em" y="1em" x="0" class="text-outer-tspan"><tspan font-weight="normal" class="text-inner-tspan" font-style="normal">ms</tspan></tspan></text></g></g></g></g><g class="nodes"><g transform="translate(248.984375, 45.5)" id="flowchart-A-10" class="node default"><rect height="75" width="126.765625" y="-37.5" x="-63.3828125" style="" class="basic label-container"></rect><g transform="translate(-33.3828125, -22.5)" style="" class="label"><rect></rect><foreignObject height="45" width="66.765625"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>App.tsx<br>Run next</p></span></div></foreignObject></g></g><g transform="translate(174.51953125, 181.25)" id="flowchart-R-11" class="node default"><rect height="52.5" width="227.859375" y="-26.25" x="-113.9296875" style="" class="basic label-container"></rect><g transform="translate(-83.9296875, -11.25)" style="" class="label"><rect></rect><foreignObject height="22.5" width="167.859375"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>route: mutate runStep</p></span></div></foreignObject></g></g><g transform="translate(174.51953125, 333.5)" id="flowchart-S-13" class="node default"><rect height="75" width="226.609375" y="-37.5" x="-113.3046875" style="" class="basic label-container"></rect><g transform="translate(-83.3046875, -22.5)" style="" class="label"><rect></rect><foreignObject height="45" width="166.609375"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>steps.ts<br>prompt + zod schema</p></span></div></foreignObject></g></g><g transform="translate(124.1953125, 480.5)" id="flowchart-L-15" class="node default"><rect height="75" width="165.203125" y="-37.5" x="-82.6015625" style="" class="basic label-container"></rect><g transform="translate(-52.6015625, -22.5)" style="" class="label"><rect></rect><foreignObject height="45" width="105.203125"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>llm.ts callLlm<br>validate + log</p></span></div></foreignObject></g></g><g transform="translate(124.1953125, 594.25)" id="flowchart-P-17" class="node default"><rect height="52.5" width="232.390625" y="-26.25" x="-116.1953125" style="" class="basic label-container"></rect><g transform="translate(-86.1953125, -11.25)" style="" class="label"><rect></rect><foreignObject height="22.5" width="172.390625"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>OpenAI-compatible API</p></span></div></foreignObject></g></g><g transform="translate(343.55859375, 480.5)" id="flowchart-D-19" class="node default"><path transform="translate(-56.546875, -36.56237695235595)" style="" class="basic label-container" d="M0,11.874917968237302 a56.546875,11.874917968237302 0,0,0 113.09375,0 a56.546875,11.874917968237302 0,0,0 -113.09375,0 l0,49.3749179682373 a56.546875,11.874917968237302 0,0,0 113.09375,0 l0,-49.3749179682373"></path><g transform="translate(-49.046875, -1.25)" style="" class="label"><rect></rect><foreignObject height="22.5" width="98.09375"><div style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;" xmlns="http://www.w3.org/1999/xhtml"><span class="nodeLabel"><p>.data/db.json</p></span></div></foreignObject></g></g></g></g></g></svg></figure>
+<ol>
+<li><code>App.tsx</code> posts <code>{ n }</code> to <code>/api/step</code>.</li>
+<li>The route runs <code>mutate(db =&gt; runStep(db, n))</code>. <code>mutate</code> serializes writers; <code>runStep</code> only accepts <code>completed + 1</code>.</li>
+<li><code>runStep</code> sets <code>db.running</code> and calls the step function. LLM steps call <code>callLlm</code> with a zod schema, per page, up to <code>LLM_CONCURRENCY</code> at a time (default 1, for free tiers).</li>
+<li>Each LLM call is appended to <code>db.llmCalls</code> and written to disk; the browser polls <code>/api/state</code>, so calls appear live.</li>
+<li>The step applies the answers, sets <code>completed</code>, clears <code>running</code>. Errors land in <code>db.error</code> and show in the step.</li>
+</ol>
+<p>Review actions and the review switch follow the same pattern: thin route, one <code>mutate</code>, logic in <code>steps.ts</code>.</p>
+<h2>The LLM layer</h2>
+<p><code>callLlm({ step, label, system, prompt, schema, log })</code>:</p>
+<ol>
+<li>Calls <code>generateText</code> with <code>Output.object({ schema })</code> against <code>LLM_BASE_URL</code> / <code>LLM_MODEL</code> (default Gemini <code>gemini-3.1-flash-lite</code>), with <code>maxRetries: 8</code> so rate limits back off and retry.</li>
+<li><code>schema.parse</code>s the result; a malformed answer throws.</li>
+<li>Logs an <code>LlmCall</code> (prompt, response or error, model, ms) for the UI.</li>
+</ol>
+<p>With no <code>LLM_API_KEY</code> it throws a message saying how to set one, and the header shows a red badge. Tests call <code>setTestModel()</code> with a mock model instead. Prompts live with their step in <code>steps.ts</code>.</p>
+<h2>Data model</h2>
+<p>All state is one <code>DB</code> object. The chain that makes healing targeted: <strong>question → fact ids → quote in a page</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Key fields</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Concept</code></td>
+<td>name, kind, summary, examSection</td>
+</tr>
+<tr>
+<td><code>Fact</code></td>
+<td>statement, quote, docId, conceptIds, status (current / changed / removed), origin (original / revised / new), replaces / replacedBy, quoteFound</td>
+</tr>
+<tr>
+<td><code>FactCheck</code></td>
+<td>factId, verdict (still_true / changed / removed), reason, newFactId</td>
+</tr>
+<tr>
+<td><code>DocChange</code></td>
+<td>title, oldTitle, status (unchanged / changed / new_page / removed_page), before, after</td>
+</tr>
+<tr>
+<td><code>Question</code></td>
+<td>stem, 4 options, answer, explanation, factIds, status (live / hidden), history</td>
+</tr>
+<tr>
+<td><code>Proposal</code></td>
+<td>kind (rewrite / new), before, after, reason, problems, status (pending / applied / rejected / undone)</td>
+</tr>
+<tr>
+<td><code>LlmCall</code></td>
+<td>step, label, model, system, prompt, response, ms, error</td>
+</tr>
+</tbody></table></div>
+<p><code>db.snapshot</code> copies concepts, facts and questions after step 3 so steps 2–3 can still show the &quot;before&quot; state.</p>
+<h2>Common changes</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>To</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Add or edit a docs page</td>
+<td><code>LIBRARY</code> in <code>library.ts</code> (<code>## </code> headings; <code>null</code> for a page that is new or removed)</td>
+</tr>
+<tr>
+<td>Change the demo&#39;s starting selection</td>
+<td><code>DEFAULT_SELECTION</code> in <code>library.ts</code></td>
+</tr>
+<tr>
+<td>Edit a prompt or schema</td>
+<td>The step function in <code>steps.ts</code>; update the scripted answers in <code>tests/pipeline.test.ts</code> if the schema changes</td>
+</tr>
+<tr>
+<td>Use another model</td>
+<td><code>LLM_BASE_URL</code>, <code>LLM_MODEL</code>, <code>LLM_API_KEY</code> in <code>.env.local</code></td>
+</tr>
+<tr>
+<td>Swap storage for a database</td>
+<td><code>readDb</code>, <code>writeDb</code>, <code>mutate</code> in <code>store.ts</code></td>
+</tr>
+<tr>
+<td>Add a step</td>
+<td>Function in <code>steps.ts</code>, case in <code>runStep</code>, entry in <code>STEP_META</code>, panel in <code>StepViews.tsx</code></td>
+</tr>
+</tbody></table></div>
+<h2>Commands</h2>
+<pre><code class="language-bash">npm run dev                  # http://localhost:3000
+npm test                     # 16 tests, no key, no network
+npm run run-all              # headless live run of the default selection; DOCS=all for every page, REVIEW=0 for review off
+npm run typecheck
+</code></pre>
+
+</main>
+<footer>Fidelis · Memorang Exercise B · <a href="../README.md">README</a></footer>
+</body>
+</html>

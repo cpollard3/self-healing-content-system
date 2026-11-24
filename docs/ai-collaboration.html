@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How this was built with AI</title>
+<style>
+:root{--bg:#fafaf9;--fg:#1c1917;--muted:#57534e;--line:#e7e5e4;--card:#fff;--accent:#4f46e5;--code:#f5f5f4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1917;--fg:#f5f5f4;--muted:#a8a29e;--line:#44403c;--card:#292524;--accent:#a5b4fc;--code:#292524;color-scheme:dark}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{border-bottom:1px solid var(--line);background:var(--card)}
+.bar{max-width:860px;margin:0 auto;padding:14px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
+.brand{font-weight:700;color:var(--fg);text-decoration:none;margin-right:auto}
+.brand span{color:var(--muted);font-weight:400}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;padding:4px 0;border-bottom:2px solid transparent}
+nav{display:flex;gap:18px;flex-wrap:wrap}
+nav a.on{color:var(--fg);border-bottom-color:var(--accent)}
+main{max-width:860px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:2rem;line-height:1.2;margin:0 0 24px}
+h2{font-size:1.35rem;margin:44px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
+h3{font-size:1.1rem;margin:28px 0 8px}
+p,li{max-width:72ch}
+a{color:var(--accent)}
+code{font:0.88em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:1px 5px;border-radius:5px}
+pre{background:var(--code);padding:14px 16px;border-radius:10px;overflow-x:auto;border:1px solid var(--line)}
+pre code{background:none;padding:0}
+.table-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-weight:600;background:var(--code)}
+tr:last-child td{border-bottom:0}
+.diagram{margin:20px 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--card);overflow-x:auto;text-align:center}
+.diagram svg{max-width:100%;height:auto}
+@media (prefers-color-scheme:dark){.diagram{background:#fafaf9;border-color:#57534e}}
+footer{max-width:860px;margin:0 auto;padding:0 20px 40px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="bar"><a class="brand" href="design.html">Fidelis <span>· self-healing exam content</span></a><nav><a href="design.html">Design</a><a href="codebase.html">Codebase</a><a href="ai-collaboration.html" class="on" aria-current="page">How it was built</a></nav></div></header>
+<main>
+<h1>How this was built with AI</h1>
+<p>I built Fidelis with Claude Code. Claude wrote the code, prompts, tests and docs. I acted as product owner and reviewer: I set the direction, decided what the system should be, and cut what was too complicated.</p>
+<h2>Understanding before building</h2>
+<p>Before any design, I had Claude walk through the brief and the decisions it implied, so I understood the problem before choosing a solution. I asked for a design document that was easy to follow, with diagrams.</p>
+<h2>Steering towards simplicity</h2>
+<p>The early designs were too elaborate, and I sent them back several times. I questioned the parts that weren't needed: an LLM treated as optional, mandatory manual review, layers of rule-based checks, and separate handling for every kind of documentation change. I reduced the core to one idea: for each fact in the knowledge graph, ask the LLM whether it is still true given the updated docs. That check became the centre of the design.</p>
+<h2>Shaping the pipeline</h2>
+<ul>
+<li>I asked for the knowledge graph as its own layer, with questions generated from the graph, so each question links to the facts it tests and healing can be targeted.</li>
+<li>I set the order of the steps: choose the source of truth, propose questions, update the docs, check what changed and propose new questions.</li>
+<li>I decided the split of work: the LLM proposes every update, and a person can optionally review it, seeing the old and new citation side by side.</li>
+</ul>
+<h2>A real proof of concept</h2>
+<p>I wanted the simplest MVP that genuinely works end to end with a real LLM, not a mock that only looks like it works. I also wanted an interface built for demoing, one that shows what happens at each step, including the exact prompts and responses.</p>
+<h2>Refining through use</h2>
+<p>I ran it live and reviewed the results. When I noticed that facts labelled as new were often things the old page already said, I had that fixed. I made sure the updated docs contain a genuinely new change, so the demo shows a real rewrite. I adjusted the demo's defaults and wording, and kept the docs in sync with what was built.</p>
+<h2>A final simplification pass</h2>
+<p>At the end I asked Claude to list everything that could be removed, and approved all of it. That included going live-only, merging the review step into the main flow, and dropping extra tracking the brief didn't need.</p>
+<h2>What Claude did</h2>
+<p>Claude wrote the implementation (Next.js, TypeScript, Vercel AI SDK, zod), the prompts and schemas, the tests and the docs, and debugged the LLM setup. I reviewed each stage and decided what to keep, change or remove.</p>
+</main>
+<footer>Fidelis · Memorang Exercise B · <a href="../README.md">README</a></footer>
+</body>
+</html>
